@@ -1,0 +1,94 @@
+---
+title: 'Marvel & DC Analysis'
+author: 'Susan Lin'
+date: "5/1/2022"
+output: word_document
+---
+
+```{r}
+
+```
+
+
+```{r}
+read.csv("db.csv")
+db <- read.csv("db.csv")
+names(db)
+
+keepcols <- c("Original.Title", "Company", "Rate", "Budget", "Opening.Weekend.USA","Gross.USA", "Gross.Worldwide")
+db <- db[, keepcols]
+names(db)
+
+db.sorted <- db[order(db$Rate,decreasing=TRUE),]
+head(db.sorted, 10)
+
+db.sorted <- db[order(db$Gross.Worldwide,decreasing=TRUE),]
+head(db.sorted, 10)
+
+db.sorted <- db[order(db$Opening.Weekend.USA,decreasing=TRUE),]
+head(db.sorted, 10)
+
+db.sorted <- db[order(db$Gross.USA,decreasing=TRUE),]
+head(db.sorted, 10)
+
+db.sorted <- db[order(db$Budget,decreasing=TRUE),]
+head(db.sorted, 10)
+
+head(db, 23)
+Marvel <- head(db, 23)
+
+tail(db, 16)
+DC <- tail(db, 16)
+
+summary(db)
+summary(Marvel)
+summary(DC)
+
+library(ggplot2)
+ggplot(db, aes(x= Budget, y= Rate, color= Company, pch= Company)) +
+  geom_point(size=2) +
+  geom_smooth(method="lm", aes(fill=Company))
+
+ggplot(db, aes(x= Budget, y= Gross.Worldwide, color= Company, pch= Company)) +
+  geom_point(size=2) + 
+  geom_smooth(method="lm", aes(fill=Company))
+```
+
+
+
+```{r}
+library(regclass)
+associate(Rate~Budget, data= db)
+associate(Gross.Worldwide~Budget, data= db)
+associate(Opening.Weekend.USA~Budget, data= db)
+associate(Gross.USA~Budget, data= db)
+
+lm(Rate~Budget, data= db)
+M <- lm(Rate~Budget, data= db)
+possible_regressions(M)
+summary(M)
+confint(M,level=0.95)
+
+
+lm(Gross.Worldwide~Budget, data= db)
+B <- lm(Gross.Worldwide~Budget, data= db)
+possible_regressions(B)
+summary(B)
+confint(B,level=0.95)
+
+lm(Opening.Weekend.USA~Budget, data= db)
+C <- lm(Opening.Weekend.USA~Budget, data= db)
+possible_regressions(C)
+summary(C)
+confint(C,level=0.95)
+
+lm(Gross.USA~Budget, data= db)
+D <- lm(Gross.USA~Budget, data= db)
+possible_regressions(D)
+summary(D)
+confint(D,level=0.95)
+
+all_correlations(db, interest= "Budget", sorted= "magnitude")
+```
+
+
